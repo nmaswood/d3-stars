@@ -7,13 +7,21 @@ const constants = {
 };
 
 class Point {
-    constructor(x,y, size, shine, rotationAngle){
+    constructor(x,y, size, shine, rotationAngle, transitionDuration){
         this.x = x;
         this.y = y;
         this.size = size;
         this.shine = shine;
         this.rotationAngle = rotationAngle;
+        this.transitionDuration = transitionDuration;
+
     }
+
+    clone() {
+        return new Point(this.x, this.y, this.size, this.shine, this.rotationAngle, this.transitionDuration)
+    }
+
+
 }
 
 class GenerateData {
@@ -26,9 +34,10 @@ class GenerateData {
         return new Point(
             GenerateData.randomNumber(xRange), 
             GenerateData.randomNumber(yRange),
-            GenerateData.randomNumber(.15),
+            GenerateData.randomNumber(.10),
             GenerateData.randomNumber(1),
             GenerateData.randomNumber(90),
+            1250 + GenerateData.randomNumber(500),
         );
     }
 

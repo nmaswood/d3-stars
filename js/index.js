@@ -72,31 +72,50 @@ class SVG {
         return `translate(${point.x} ${point.y}) rotate(${point.rotationAngle}) scale(${point.size})`
     }
 
+
+
     createStars(svg,data){
         const that = this;
+
+        function noop(){};
+
+        function dragged(d) {
+            const cloned = d.clone();
+            cloned.x = d3.event.x;
+            cloned.y = d3.event.y;
+            const newString = that.createTransform(cloned);
+            d3.select(this).attr("transform", newString); 
+        }
+
         const strokeWidth = 3;
+        const transitionDuration = 1000;
         const stars = svg.selectAll('g')
             .data(data)
             .enter()
             .append('g')
-            .attr('transform', function(d) { return that.createTransform(d)})
+            .call(d3.drag().on("drag", dragged))
+           .attr('transform', function(d) { return that.createTransform(d)})
             .append('path')
             .attr('d', this.createStarAttr())
             .attr('stroke', 'yellow')
             .attr('fill', 'white')
             .attr('stroke-width', strokeWidth)
             .transition()
-            .duration(1000)
+            .duration(function(d) {return d.transitionDuration})
             .delay(40)
             .on("start", function repeat() {
                 d3.active(this)
-                    .attr('stroke-width', strokeWidth * 5)
+                    .attr('stroke-width', strokeWidth * 3)
                     .transition()
-                    .duration(1000)
-                    .attr('stroke-width', strokeWidth )
+                    .duration(function(d) {return d.transitionDuration})
+                    .attr('stroke-width', strokeWidth)
                     .transition()
                     .on("start", repeat);
-            });
+            })
+            
+
+
+
     }
 }
 
