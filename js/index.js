@@ -10,13 +10,13 @@ class SVG {
         const svgContainer = d3.select('#entry')
             .append('div')
             .attr('id', 'svg-container')
-            .style('width', (this.maxWidth + this.padding) + 'px')
-            .style('height', (this.maxHeight + this.padding) + 'px');
+            .style('width', '100%')//(this.maxWidth + this.padding) + 'px')
+            .style('height', '100%')//(this.maxHeight + this.padding) + 'px');
 
         const svg = d3.select('#svg-container')
             .append('svg')
             .attr('class', 'main-svg')
-            .attr('width', this.maxWidth)
+            .attr('width', '100%')//this.maxWidth)
             .attr('height', this.maxHeight);
         return svg;
     }
@@ -48,25 +48,55 @@ class SVG {
     createBackground(svg){
         const gradient = this.createGradient(svg);
         const rect = svg.append('rect')
-            .attr('width', this.maxWidth)
+            .attr('width', '100%')//this.maxWidth)
             .attr('height', this.maxHeight)
             .attr('fill', 'url(#gradient)');
 
         return rect;
     }
 
+    createStarAttr(){
+        return `M 180.000 200.000
+                L 208.284 208.284
+                L 200.000 180.000
+                L 208.284 151.716
+                L 180.000 160.000
+                L 151.716 151.716
+                L 160.000 180.000
+                L 151.716 208.284
+                L 180.000 200.000
+                z`
+    }
+
+    createTransform(point){
+        return `translate(${point.x} ${point.y}) rotate(${point.rotationAngle}) scale(${point.size})`
+    }
+
     createStars(svg,data){
-        const stars = svg.selectAll('circle')
+        const that = this;
+        const strokeWidth = 3;
+        const stars = svg.selectAll('g')
             .data(data)
             .enter()
-            .append('circle')
-            .attr('cx', function(d,i) {return d.x;})
-            .attr('cy', function(d,i) {return d.y;})
-            .attr('r', function(d,i){return d.size})
-            .attr('stroke', 'black')
-            .attr('stroke-width', '3')
-            .attr('fill', 'white');
-
+            .append('g')
+            .attr('transform', function(d) { return that.createTransform(d)})
+            .append('path')
+            .attr('d', this.createStarAttr())
+            .attr('stroke', 'yellow')
+            .attr('fill', 'white')
+            .attr('stroke-width', strokeWidth)
+            .transition()
+            .duration(1000)
+            .delay(40)
+            .on("start", function repeat() {
+                d3.active(this)
+                    .attr('stroke-width', strokeWidth * 5)
+                    .transition()
+                    .duration(1000)
+                    .attr('stroke-width', strokeWidth )
+                    .transition()
+                    .on("start", repeat);
+            });
     }
 }
 
