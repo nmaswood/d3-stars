@@ -2,7 +2,7 @@
 const constants = {
     maxWidth: Math.max(window.innerWidth, 1200),
     maxHeight: Math.max(window.innerHeight, 1200),
-    dataPoints: 250,
+    dataPoints: 300,
     padding: 50
 };
 
@@ -35,7 +35,7 @@ class GenerateData {
             GenerateData.randomNumber(xRange), 
             GenerateData.randomNumber(yRange),
             GenerateData.randomNumber(.10),
-            GenerateData.randomNumber(1),
+            GenerateData.randomNumber(13),
             GenerateData.randomNumber(90),
             1250 + GenerateData.randomNumber(500),
         );

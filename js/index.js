@@ -81,67 +81,74 @@ class SVG {
 
         function noop(){};
 
-        function dragged(d) {
+        function dragged(d, x, y) {
             const cloned = d.clone();
-            cloned.x = d3.event.x;
-            cloned.y = d3.event.y;
+            cloned.x = x + Math.random(100);
+            cloned.y = y + Math.random(100);
             const newString = that.createTransform(cloned);
             d3.select(this).attr("transform", newString); 
         }
 
         const strokeWidth = 3;
         const transitionDuration = 1000;
-        const stars = svg.selectAll('g')
+        const g = svg.selectAll('g')
             .data(data)
             .enter()
             .append('g')
-            //.call(d3.drag().on("drag", dragged))
-            .attr('transform', function(d) { return that.createTransform(d)})
-            .append('path')
+            .attr('transform', function(d) { return that.createTransform(d)});
+
+        const stars = g.append('path')
             .attr('d', this.createStarAttr())
             .attr('stroke', 'yellow')
             .attr('fill', 'white')
             .attr('stroke-width', strokeWidth)
             .transition()
             .duration(function(d) {return d.transitionDuration})
-            .delay(40)
+            .delay(500)
             .on("start", function repeat() {
                 d3.active(this)
-                    .attr('stroke-width', strokeWidth * 5)
+                    .attr('stroke-width', function (d) { return strokeWidth * d.shine;})
                     .transition()
                     .duration(function(d) {return d.transitionDuration})
                     .attr('stroke-width', strokeWidth)
                     .transition()
                     .on("start", repeat);
             });
+
         return stars;
     }
 
     createText(svg) {
-        const div = svg.append('g')
+        const textBox = svg.append('g')
             .append('text')
-            .attr('x', this.maxWidth / 2)
-            .attr('y', this.maxHeight / 3.2)
+            .attr('x', this.maxWidth / 2.15)
+            .attr('y', this.maxHeight / 4)
             .attr('font-family', 'Verdana')
             .attr('font-size', '30px')
-            .attr('fill', 'white')
-            .append("tspan")
+            .style("text-anchor", "middle")
+            .attr('fill', 'white');
+
+        textBox.append("tspan")
             .text("Hi. My name is Nasr Maswood.")
-            .attr('dx', -220)
-            .append("tspan")
+            .style("text-anchor", "middle")
+
+        textBox.append("tspan")
             .text("I am a 22 year old Software Engineer based in Chicago.")
             .attr('dx', -650)
-            .attr('dy', 50)
-            .append("tspan")
+            .attr('dy', 50);
+
+        textBox.append("tspan")
             .text("I enjoy Sufi Poetry, freestyle rapping and most recently ballroom dance.")
             .attr('dx', -650 - 290)
-            .attr('dy', 50)
-            .append("tspan")
+            .attr('dy', 50);
+
+        textBox.append("tspan")
             .text("Feel free to reach out at nasrmaswood@gmail.com")
             .attr('dx', -650 - 150)
             .attr('dy', 50)
-            .attr('font-size', '15px')
-            .append('tspan')
+            .attr('font-size', '15px');
+
+        textBox.append('tspan')
             .text("To see my old website click here!")
             .attr('dx', -320)
             .attr('dy', 50)
@@ -152,7 +159,6 @@ class SVG {
                     window.open("http://google.com")
 
                 })
-            .style("text-anchor", "middle");
     }
 }
 
